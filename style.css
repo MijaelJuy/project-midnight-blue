@@ -13,26 +13,23 @@ body {
 .background-animation {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    /* Degradado en tonos azules que rota entre claro y oscuro */
     background: linear-gradient(135deg, #07133a, #0b3d91, #1e5fbf, #6fb3ff);
     background-size: 400% 400%;
     animation: gradientBG 12s ease infinite;
-    z-index: 0; /* Al fondo */
-    pointer-events: none; /* <--- ESTO ES LA CLAVE: El fondo no bloquea clicks */
+    z-index: 0;
+    pointer-events: none;
 }
 
 @keyframes gradientBG {
     0% { background-position: 0% 50%; }
-    25% { background-position: 50% 20%; }
     50% { background-position: 100% 50%; }
-    75% { background-position: 50% 80%; }
     100% { background-position: 0% 50%; }
 }
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .vscode-container {
     position: relative; 
-    z-index: 10; /* Por encima del fondo */
+    z-index: 10;
     display: flex;
     height: 100%;
     background-color: rgba(30, 30, 30, 0.75); 
@@ -44,11 +41,12 @@ body {
     width: 48px;
     background-color: rgba(40, 40, 40, 0.6);
     display: flex; flex-direction: column; align-items: center; padding-top: 10px;
+    flex-shrink: 0; /* No encoger en movil */
 }
 .icon-container {
     width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-left: 2px solid transparent;
 }
-.icon-container i { color: #858585; font-size: 24px; pointer-events: none; /* El icono no bloquea el click del div */ }
+.icon-container i { color: #858585; font-size: 24px; pointer-events: none; }
 .icon-container:hover i, .icon-container.active i { color: #ffffff; }
 .icon-container.active { border-left-color: #ffffff; }
 .icon-bottom { margin-top: auto; padding-bottom: 35px; }
@@ -57,7 +55,7 @@ body {
 /* 2. Side Bar */
 .sidebar {
     width: 250px;
-    background-color: rgba(30, 30, 30, 0.5);
+    background-color: rgba(30, 30, 30, 0.95); /* Más opaco para leer mejor */
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     display: flex; flex-direction: column;
 }
@@ -73,7 +71,7 @@ body {
 .js-icon { color: #f0db4f; } .css-icon { color: #42a5f5; } .html-icon { color: #e44d26; }
 
 /* 3. Main Area */
-.main-area { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
+.main-area { flex-grow: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
 
 /* Editor */
 .editor { flex-grow: 1; display: flex; flex-direction: column; }
@@ -97,7 +95,7 @@ body {
     margin-bottom: 25px;
     position: relative;
     z-index: 20;
-    cursor: text; /* Indica que se puede escribir */
+    cursor: text;
 }
 .terminal-header { display: flex; font-size: 11px; margin-bottom: 10px; font-weight: bold; color: #aaa; }
 .active-tab { border-bottom: 1px solid #fff; color: #fff; }
@@ -118,7 +116,7 @@ input {
 }
 .floating-status-left { left: 50px; }
 .floating-status-right { right: 10px; }
-.item { display: flex; align-items: center; gap: 5px; pointer-events: auto; } /* Aseguramos que los items reciban clicks */
+.item { display: flex; align-items: center; gap: 5px; pointer-events: auto; }
 
 /* Search & Git Styles */
 .search-box { padding: 10px; }
@@ -131,3 +129,46 @@ input {
 .extension-item i { color: #3399ff; }
 .ext-details { margin-left: 10px; display: flex; flex-direction: column; }
 .install-btn { background: #1e90ff; border: none; color: white; margin-top: 5px; width: fit-content; padding: 4px 10px; font-size: 12px; border-radius: 4px; }
+
+/* --- RESPONSIVE DESIGN (PARA CELULARES) --- */
+@media (max-width: 768px) {
+    /* El Sidebar ahora flota sobre el contenido en lugar de empujarlo */
+    .sidebar {
+        position: absolute;
+        left: 48px; /* Pegado a la barra de iconos */
+        top: 0;
+        height: 100%;
+        z-index: 100; /* Encima de todo */
+        width: 80%; /* Ancho cómodo para dedo */
+        max-width: 300px;
+        border-right: 1px solid #333;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    }
+
+    /* El editor ocupa todo el ancho */
+    .main-area {
+        width: calc(100% - 48px);
+        margin-left: 0;
+    }
+
+    /* Ajustar terminal para que se vea bien con teclado en pantalla */
+    .terminal-container {
+        height: 40%;
+    }
+
+    /* Ocultar cosas innecesarias en la barra inferior para ganar espacio */
+    .floating-status-left {
+        display: none;
+    }
+    
+    .floating-status-right {
+        left: 55px; /* Mover a la izquierda para que quepa */
+        right: auto;
+        bottom: 5px;
+    }
+
+    /* Evitar zoom al escribir en iPhone */
+    input {
+        font-size: 16px;
+    }
+}

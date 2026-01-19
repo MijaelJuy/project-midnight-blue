@@ -23,15 +23,15 @@ const codeToType = [
     `<span class="tag">&lt;/html&gt;</span>`
 ];
 
-    // Código especial que aparece al ejecutar el comando <3
-    const heartCode = [
-        `<span class="com">&lt;!-- Para Anna --&gt;</span>`,
-        `<span class="tag">&lt;section&gt;</span>`,
-        `  <span class="tag">&lt;h2&gt;</span>Pequeños mensajes<span class="tag">&lt;/h2&gt;</span>`,
-        `  <span class="tag">&lt;p&gt;</span>Gracias por las risas y las charlas.<span class="tag">&lt;/p&gt;</span>`,
-        `  <span class="com">&lt;!-- Un detalle especial abajo --&gt;</span>`,
-        `<span class="tag">&lt;/section&gt;</span>`
-    ];
+// Código especial que aparece al ejecutar el comando <3
+const heartCode = [
+    `<span class="com">&lt;!-- Para Anna --&gt;</span>`,
+    `<span class="tag">&lt;section&gt;</span>`,
+    `  <span class="tag">&lt;h2&gt;</span>Pequeños mensajes<span class="tag">&lt;/h2&gt;</span>`,
+    `  <span class="tag">&lt;p&gt;</span>Gracias por las risas y las charlas.<span class="tag">&lt;/p&gt;</span>`,
+    `  <span class="com">&lt;!-- Un detalle especial abajo --&gt;</span>`,
+    `<span class="tag">&lt;/section&gt;</span>`
+];
 
 let lineIndex = 0;
 function typeWriter() {
@@ -44,17 +44,25 @@ function typeWriter() {
 }
 
 // --- SISTEMA DE PESTAÑAS (Global) ---
-// Usamos window.switchTab para asegurar que el HTML lo encuentre
 window.switchTab = function(tabName) { 
     console.log("Cambiando pestaña a: " + tabName);
     
-    // 1. Quitar clase active de todos los iconos
-    document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
+    // Si ya está activa y le das click, se cierra (comportamiento estilo toggle)
+    const currentBtn = document.getElementById(tabName === 'explorer' ? 'btn-explorer' : 
+                                             tabName === 'search' ? 'btn-search' : 
+                                             tabName === 'git' ? 'btn-git' : 'btn-extensions');
     
-    // 2. Ocultar todos los paneles
+    if(currentBtn && currentBtn.classList.contains('active')) {
+        // Cerrar todo
+        document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
+        document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
+        return;
+    }
+
+    // Limpiar activos
+    document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
     document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
 
-    // 3. Activar el correcto
     const btnMap = {
         'explorer': 'btn-explorer',
         'search': 'btn-search',
@@ -77,8 +85,8 @@ window.switchTab = function(tabName) {
 
 // --- TERMINAL ---
 const heartAscii = `<pre style="color: #ff69b4; font-weight: bold; line-height: 1; margin:0; font-family: monospace;">
-           ****** ******
-       ********** **********
+        ****** ******
+      ********** **********
     ****************************
    ******************************
    ******************************
@@ -103,17 +111,14 @@ input.addEventListener("keydown", function(event) {
         const command = input.value.trim();
         if(command === "") return;
 
-        // Si es la primera vez que escribe, activamos el código de arriba
         if (!hasStarted) {
             codeArea.innerHTML = ""; 
             typeWriter(); 
             hasStarted = true;
         }
 
-        // Mostrar comando en pantalla
         terminalOutput.innerHTML += `<div><span class="prompt">PS C:\\Users\\Acer Predator></span> ${command}</div>`;
         
-        // Lógica de respuesta
         let response = "";
         const cmd = command.toLowerCase();
 
@@ -124,7 +129,6 @@ input.addEventListener("keydown", function(event) {
             response = "¡Hola! Estoy aquí — dime qué quieres hacer.";
         }
         else if (cmd === "<3" || cmd === "corazon") {
-            // Limpiar la terminal y el editor, luego escribir un bloque especial antes de mostrar el corazón
             terminalOutput.innerHTML = "";
             codeArea.innerHTML = "";
             hasStarted = true;
@@ -166,7 +170,6 @@ input.addEventListener("keydown", function(event) {
         }
 
         input.value = "";
-        // Scroll automático hacia abajo
         terminalOutput.scrollTop = terminalOutput.scrollHeight;
     }
 });
@@ -174,7 +177,16 @@ input.addEventListener("keydown", function(event) {
 // Forzar el foco al cargar la página
 window.onload = function() {
     input.focus();
-    // Evitar que archivos deshabilitados reaccionen al click y permitir activar archivos disponibles
+    
+    // Auto-cerrar sidebar en móvil al tocar el editor
+    document.querySelector('.main-area').addEventListener('click', () => {
+        if(window.innerWidth < 768) {
+            document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
+            document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
+        }
+    });
+
+    // Archivos del explorador
     document.querySelectorAll('.file-item').forEach(item => {
         item.addEventListener('click', () => {
             if (item.classList.contains('disabled-file')) return;
@@ -183,7 +195,7 @@ window.onload = function() {
         });
     });
 
-    // Manejar sugerencias de búsqueda
+    // Sugerencias de búsqueda
     const suggestions = document.querySelectorAll('.suggestion-item');
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
@@ -191,12 +203,10 @@ window.onload = function() {
         suggestions.forEach(s => {
             s.addEventListener('click', () => {
                 if (searchInput) searchInput.value = s.textContent;
-                // mostrar detalle rápido
                 const info = document.createElement('div');
                 info.className = 'file-match';
                 info.style.marginTop = '8px';
                 info.textContent = `Sugerencia seleccionada: ${s.textContent}`;
-                // remover mensajes anteriores temporales
                 const prev = document.getElementById('suggestion-note');
                 if (prev) prev.remove();
                 info.id = 'suggestion-note';
@@ -205,7 +215,7 @@ window.onload = function() {
         });
     }
 
-    // Simular subida en la vista Git
+    // Git Upload
     const btnUpload = document.getElementById('btn-upload');
     const uploadStatus = document.getElementById('upload-status');
     if (btnUpload && uploadStatus) {
@@ -241,7 +251,6 @@ window.onload = function() {
                         clearInterval(dotInterval);
                         uploadStatus.style.color = '#4ec9b0';
                         uploadStatus.textContent = 'Subida completada ✔️';
-                        // Marcar botón como subido
                         btnUpload.textContent = 'Subido';
                         btnUpload.disabled = true;
                         btnUpload.style.opacity = '0.7';
@@ -252,14 +261,12 @@ window.onload = function() {
                     }, step.delay);
                 }
             }
-
             nextStep();
         });
     }
 
-    // Instalar/extensiones: botones en la vista Extensions
+    // Extensiones
     document.querySelectorAll('.ext-install-btn').forEach(btn => {
-        // si el botón ya dice 'Installed' al inicio, marcar como instalado
         if (btn.textContent.toLowerCase().includes('installed')) {
             btn.disabled = true;
             btn.dataset.installed = 'true';
@@ -274,7 +281,7 @@ window.onload = function() {
             btn.style.background = '#4ec9b0';
             btn.style.color = '#fff';
             btn.style.opacity = '0.95';
-            // mostrar pequeña confirmación en la vista (opcional)
+            
             const details = btn.closest('.ext-details');
             if (details) {
                 const note = document.createElement('div');
@@ -287,37 +294,21 @@ window.onload = function() {
         });
     });
 
-    // --- CONTROL DE MÚSICA (NUEVO) ---
+    // Control de música
     const music = document.getElementById('bgMusic');
     const musicBtn = document.getElementById('musicControl');
     let isPlaying = false;
 
     if (music && musicBtn) {
-        // Asegurar ruta y propiedades básicas
-        if (!music.getAttribute('src') && music.querySelector('source')) {
-            music.src = music.querySelector('source').getAttribute('src') || 'musica.mp3';
-        }
-        music.preload = 'auto';
-        music.volume = 0.8; // volumen por defecto
-        music.muted = false;
-
         musicBtn.addEventListener('click', () => {
             if (!isPlaying) {
                 music.play().then(() => {
                     isPlaying = true;
                     musicBtn.innerHTML = '<i class="fas fa-pause-circle"></i> <span style="margin-left:5px;">Reproduciendo...</span>';
-                    musicBtn.style.color = '#4ec9b0';
+                    musicBtn.style.color = '#4ec9b0'; 
                 }).catch(error => {
-                    console.warn("Error al reproducir audio:", error);
-                    // Mostrar mensaje visible en la terminal si falla
-                    if (terminalOutput) {
-                        const note = document.createElement('div');
-                        note.style.color = '#ffcc00';
-                        note.style.marginTop = '6px';
-                        note.textContent = 'No se pudo reproducir el archivo de audio. Pulsa el botón y confirma permisos en el navegador.';
-                        terminalOutput.appendChild(note);
-                        terminalOutput.scrollTop = terminalOutput.scrollHeight;
-                    }
+                    console.log("Error al reproducir: ", error);
+                    alert("Para escuchar música, debes tener el archivo 'musica.mp3' en la carpeta.");
                 });
             } else {
                 music.pause();
