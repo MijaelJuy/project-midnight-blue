@@ -1,0 +1,133 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Consolas', monospace;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000;
+    color: #ccc;
+}
+
+/* --- FONDO ANIMADO --- */
+.background-animation {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* Degradado en tonos azules que rota entre claro y oscuro */
+    background: linear-gradient(135deg, #07133a, #0b3d91, #1e5fbf, #6fb3ff);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    z-index: 0; /* Al fondo */
+    pointer-events: none; /* <--- ESTO ES LA CLAVE: El fondo no bloquea clicks */
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 50% 20%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 80%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.vscode-container {
+    position: relative; 
+    z-index: 10; /* Por encima del fondo */
+    display: flex;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.75); 
+    backdrop-filter: blur(5px);
+}
+
+/* 1. Activity Bar */
+.activity-bar {
+    width: 48px;
+    background-color: rgba(40, 40, 40, 0.6);
+    display: flex; flex-direction: column; align-items: center; padding-top: 10px;
+}
+.icon-container {
+    width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-left: 2px solid transparent;
+}
+.icon-container i { color: #858585; font-size: 24px; pointer-events: none; /* El icono no bloquea el click del div */ }
+.icon-container:hover i, .icon-container.active i { color: #ffffff; }
+.icon-container.active { border-left-color: #ffffff; }
+.icon-bottom { margin-top: auto; padding-bottom: 35px; }
+.icon-bottom i { color: #858585; font-size: 24px; }
+
+/* 2. Side Bar */
+.sidebar {
+    width: 250px;
+    background-color: rgba(30, 30, 30, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex; flex-direction: column;
+}
+.sidebar-view { flex-grow: 1; display: flex; flex-direction: column; }
+.sidebar-view.hidden { display: none; }
+.sidebar-title { font-size: 11px; padding: 10px 20px; color: #bbbbbb; font-weight: bold; letter-spacing: 1px; }
+.folder-header { padding: 5px 20px; font-weight: bold; font-size: 12px; color: #e7e7e7; }
+.file-item { padding: 4px 30px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; color: #ccc; }
+.file-item:hover { background-color: rgba(255, 255, 255, 0.1); }
+.file-item.active { background-color: rgba(255, 255, 255, 0.1); color: #fff; }
+.disabled-file { opacity: 0.5; cursor: default; pointer-events: none; }
+
+.js-icon { color: #f0db4f; } .css-icon { color: #42a5f5; } .html-icon { color: #e44d26; }
+
+/* 3. Main Area */
+.main-area { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
+
+/* Editor */
+.editor { flex-grow: 1; display: flex; flex-direction: column; }
+.tab-bar { background-color: rgba(30, 30, 30, 0.4); display: flex; height: 35px; }
+.tab { padding: 0 15px; color: #fff; border-top: 1px solid #e44d26; background: rgba(50, 50, 50, 0.3); font-size: 13px; display: flex; align-items: center; gap: 8px; min-width: 120px; }
+.close-tab { margin-left: auto; cursor: pointer; }
+
+.code-content { 
+    padding: 20px; font-family: 'Consolas', monospace; font-size: 15px; line-height: 1.6; color: #d4d4d4; 
+    overflow-y: auto; height: 100%;
+}
+.tag { color: #569cd6; } .attr { color: #9cdcfe; } .val { color: #ce9178; } .com { color: #6a9955; }
+
+/* Terminal */
+.terminal-container { 
+    height: 35%; 
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    display: flex; flex-direction: column; 
+    padding: 10px; 
+    background-color: rgba(20, 20, 20, 0.9);
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 20;
+    cursor: text; /* Indica que se puede escribir */
+}
+.terminal-header { display: flex; font-size: 11px; margin-bottom: 10px; font-weight: bold; color: #aaa; }
+.active-tab { border-bottom: 1px solid #fff; color: #fff; }
+.terminal-body { flex-grow: 1; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 5px; }
+
+.input-line { display: flex; align-items: center; }
+.prompt { color: #ffeb3b; margin-right: 8px; font-weight: bold; }
+
+input { 
+    background: transparent; border: none; color: #ffffff; 
+    font-family: 'Consolas', monospace; font-size: inherit; flex-grow: 1; outline: none; 
+    z-index: 30;
+}
+
+/* Info Flotante */
+.floating-status-left, .floating-status-right {
+    position: absolute; bottom: 5px; display: flex; gap: 15px; font-size: 12px; color: rgba(255, 255, 255, 0.6); padding: 2px 10px; pointer-events: none; z-index: 40;
+}
+.floating-status-left { left: 50px; }
+.floating-status-right { right: 10px; }
+.item { display: flex; align-items: center; gap: 5px; pointer-events: auto; } /* Aseguramos que los items reciban clicks */
+
+/* Search & Git Styles */
+.search-box { padding: 10px; }
+.search-box input { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid #444; color: #fff; padding: 5px; }
+.search-results, .git-terminal, .extension-item { padding: 10px; color: #ccc; font-size: 13px; }
+.file-match { margin-top: 5px; padding-left: 10px; }
+.highlight-match { background: rgba(255,255,0,0.2); color: white; }
+.git-success { color: #4ec9b0; margin-top: 10px; }
+.extension-item { padding: 10px; color: #ccc; font-size: 13px; }
+.extension-item i { color: #3399ff; }
+.ext-details { margin-left: 10px; display: flex; flex-direction: column; }
+.install-btn { background: #1e90ff; border: none; color: white; margin-top: 5px; width: fit-content; padding: 4px 10px; font-size: 12px; border-radius: 4px; }

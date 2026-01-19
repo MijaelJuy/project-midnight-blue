@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Code - Proyecto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-animation"></div>
+
+    <div class="vscode-container">
+        
+        <div class="activity-bar">
+            <div class="icon-container active" id="btn-explorer" onclick="switchTab('explorer')"><i class="far fa-copy"></i></div>
+            <div class="icon-container" id="btn-search" onclick="switchTab('search')"><i class="fas fa-search"></i></div>
+            <div class="icon-container" id="btn-git" onclick="switchTab('git')"><i class="fas fa-code-branch"></i></div>
+            <div class="icon-container" id="btn-extensions" onclick="switchTab('extensions')"><i class="fas fa-cubes"></i></div>
+            <div class="icon-bottom"><i class="fas fa-cog"></i></div>
+        </div>
+
+        <div class="sidebar" id="sidebar-panel">
+            <div id="view-explorer" class="sidebar-view">
+                <div class="sidebar-title">EXPLORER</div>
+                <div class="sidebar-content">
+                    <div class="folder-header"><i class="fas fa-chevron-down"></i> VSCODE-PROJECT</div>
+                    <div class="file-item active"><i class="fab fa-html5 html-icon"></i> index.html</div>
+                    <div class="file-item disabled-file"><i class="fab fa-css3 css-icon"></i> style.css</div>
+                    <div class="file-item disabled-file"><i class="fab fa-js js-icon"></i> system.js</div>
+                </div>
+            </div>
+            
+            <div id="view-search" class="sidebar-view hidden">
+                <div class="sidebar-title">SEARCH</div>
+                <div class="search-box"><input type="text" id="searchInput" placeholder="Buscar..." autocomplete="off"></div>
+                <div class="search-results" id="searchResults">
+                    <div class="file-match" style="font-weight:bold; padding-left:0;">Ideas para buscar</div>
+                    <div class="file-match suggestion-item">Canciones favoritas</div>
+                    <div class="file-match suggestion-item">Lugares para viajar</div>
+                    <div class="file-match suggestion-item">Recetas para compartir</div>
+                    <div class="file-match suggestion-item">Películas para ver</div>
+                    <div class="file-match suggestion-item">Memes que nos hacen reír</div>
+                </div>
+            </div>
+
+            <div id="view-git" class="sidebar-view hidden">
+                <div class="sidebar-title">SOURCE CONTROL</div>
+                <div class="git-terminal">
+                    <p class="git-success">Listo para subir.</p>
+                    <button id="btn-upload" class="install-btn">Subir</button>
+                    <div id="upload-status" style="margin-top:8px;color:#ccc;"></div>
+                </div>
+            </div>
+
+            <div id="view-extensions" class="sidebar-view hidden">
+                <div class="sidebar-title">EXTENSIONS</div>
+
+                <div class="extension-item">
+                    <i class="fas fa-moon"></i>
+                    <div class="ext-details">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span class="ext-name">Night Mode</span>
+                            <span class="ext-version">v2.3.1</span>
+                        </div>
+                        <div style="font-size:12px; color:#bfcbdc; margin-top:6px;">Tema oscuro suave y atenuado.</div>
+                        <button class="install-btn ext-install-btn" data-name="Night Mode" data-version="2.3.1">Installed</button>
+                    </div>
+                </div>
+
+                <div class="extension-item">
+                    <i class="fas fa-bell"></i>
+                    <div class="ext-details">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span class="ext-name">Atención</span>
+                            <span class="ext-version">v1.0.0</span>
+                        </div>
+                        <div style="font-size:12px; color:#bfcbdc; margin-top:6px;">Notificaciones y recordatorios suaves.</div>
+                        <button class="install-btn ext-install-btn" data-name="Atención" data-version="1.0.0">Install</button>
+                    </div>
+                </div>
+
+                <div class="extension-item">
+                    <i class="fas fa-heart"></i>
+                    <div class="ext-details">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span class="ext-name">Cariño</span>
+                            <span class="ext-version">v0.9.5</span>
+                        </div>
+                        <div style="font-size:12px; color:#bfcbdc; margin-top:6px;">Pequeños gestos y mensajes cálidos.</div>
+                        <button class="install-btn ext-install-btn" data-name="Cariño" data-version="0.9.5">Install</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="main-area">
+            <div class="editor">
+                <div class="tab-bar">
+                    <div class="tab active"><i class="fab fa-html5 html-icon"></i> index.html <span class="close-tab">×</span></div>
+                </div>
+                <div class="code-content" id="typewriter-area">
+                    <span class="com">// Esperando comando en terminal...</span>
+                </div>
+            </div>
+
+            <div class="terminal-container" onclick="document.getElementById('commandInput').focus()">
+                <div class="terminal-header">
+                    <span style="margin-right: 20px;">PROBLEMS</span>
+                    <span style="margin-right: 20px;">OUTPUT</span>
+                    <span class="active-tab">TERMINAL</span>
+                </div>
+                <div id="terminal-output" class="terminal-body">
+                    <p>Microsoft Windows [Version 10.0.19045]</p>
+                    <br>
+                    <p>Try typing: <span style="color: #ce9178">'help'</span> or <span style="color: #ce9178">'hola'</span></p>
+                    <br>
+                </div>
+                <div class="input-line">
+                    <span class="prompt">PS C:\Users\Acer Predator></span>
+                    <input type="text" id="commandInput" autocomplete="off" autofocus spellcheck="false">
+                </div>
+            </div>
+        </div>
+
+        <div class="floating-status-left">
+            <div class="item"><i class="fas fa-code-branch"></i> main*</div>
+            <div class="item"><i class="far fa-check-circle"></i> Ready</div>
+        </div>
+        <div class="floating-status-right">
+            <div class="item" id="musicControl" style="cursor: pointer; margin-right: 15px;">
+                <i class="fas fa-play-circle"></i> <span style="margin-left:5px;">Play Music</span>
+            </div>
+
+            <div class="item">Ln 1, Col 1</div>
+            <div class="item">UTF-8</div>
+            <div class="item">HTML</div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop controls>
+        <source src="musica.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
