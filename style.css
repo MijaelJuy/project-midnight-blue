@@ -41,7 +41,7 @@ body {
     width: 48px;
     background-color: rgba(40, 40, 40, 0.6);
     display: flex; flex-direction: column; align-items: center; padding-top: 10px;
-    flex-shrink: 0; /* No encoger en movil */
+    flex-shrink: 0;
 }
 .icon-container {
     width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-left: 2px solid transparent;
@@ -55,7 +55,7 @@ body {
 /* 2. Side Bar */
 .sidebar {
     width: 250px;
-    background-color: rgba(30, 30, 30, 0.95); /* Más opaco para leer mejor */
+    background-color: rgba(30, 30, 30, 0.95);
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     display: flex; flex-direction: column;
 }
@@ -130,45 +130,35 @@ input {
 .ext-details { margin-left: 10px; display: flex; flex-direction: column; }
 .install-btn { background: #1e90ff; border: none; color: white; margin-top: 5px; width: fit-content; padding: 4px 10px; font-size: 12px; border-radius: 4px; }
 
-/* --- RESPONSIVE DESIGN (PARA CELULARES) --- */
+/* --- RESPONSIVE DESIGN (PARA CELULARES) - CORREGIDO --- */
 @media (max-width: 768px) {
-    /* El Sidebar ahora flota sobre el contenido en lugar de empujarlo */
+    .vscode-container { overflow-x: hidden; }
+
+    /* IMPORTANTE: Sidebar oculto por defecto en móvil */
     .sidebar {
+        display: none; 
         position: absolute;
-        left: 48px; /* Pegado a la barra de iconos */
+        left: 48px;
         top: 0;
         height: 100%;
-        z-index: 100; /* Encima de todo */
-        width: 80%; /* Ancho cómodo para dedo */
+        z-index: 100;
+        width: 80%;
         max-width: 300px;
-        border-right: 1px solid #333;
+        background-color: #252526; 
+        border-right: 1px solid #000;
         box-shadow: 10px 0 20px rgba(0,0,0,0.5);
     }
 
-    /* El editor ocupa todo el ancho */
-    .main-area {
-        width: calc(100% - 48px);
-        margin-left: 0;
+    /* Clase mágica para mostrarlo solo cuando se necesita */
+    .sidebar.show-sidebar {
+        display: flex;
     }
 
-    /* Ajustar terminal para que se vea bien con teclado en pantalla */
-    .terminal-container {
-        height: 40%;
-    }
+    .main-area { width: calc(100% - 48px); margin-left: 0; }
+    .terminal-container { height: 45%; }
+    input { font-size: 16px; }
 
-    /* Ocultar cosas innecesarias en la barra inferior para ganar espacio */
-    .floating-status-left {
-        display: none;
-    }
-    
-    .floating-status-right {
-        left: 55px; /* Mover a la izquierda para que quepa */
-        right: auto;
-        bottom: 5px;
-    }
-
-    /* Evitar zoom al escribir en iPhone */
-    input {
-        font-size: 16px;
-    }
+    .floating-status-left { display: none; }
+    .floating-status-right { right: 5px; font-size: 10px; background-color: rgba(0,0,0,0.5); border-radius: 4px; }
+    #musicControl { padding: 5px; }
 }

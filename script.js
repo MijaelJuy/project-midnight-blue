@@ -4,10 +4,8 @@ const input = document.getElementById("commandInput");
 const terminalOutput = document.getElementById("terminal-output");
 let hasStarted = false;
 
-// Configuración inicial
 console.log("Sistema cargado correctamente.");
 
-// Código que se escribirá solo
 const codeToType = [
     `<br>`,
     `<span class="com">&lt;!-- Conexión establecida --&gt;</span>`,
@@ -23,7 +21,6 @@ const codeToType = [
     `<span class="tag">&lt;/html&gt;</span>`
 ];
 
-// Código especial que aparece al ejecutar el comando <3
 const heartCode = [
     `<span class="com">&lt;!-- Para Anna --&gt;</span>`,
     `<span class="tag">&lt;section&gt;</span>`,
@@ -43,33 +40,33 @@ function typeWriter() {
     }
 }
 
-// --- SISTEMA DE PESTAÑAS (Global) ---
+// --- SISTEMA DE PESTAÑAS (CORREGIDO) ---
 window.switchTab = function(tabName) { 
     console.log("Cambiando pestaña a: " + tabName);
+    const sidebar = document.getElementById('sidebar-panel');
     
-    // Si ya está activa y le das click, se cierra (comportamiento estilo toggle)
-    const currentBtn = document.getElementById(tabName === 'explorer' ? 'btn-explorer' : 
-                                             tabName === 'search' ? 'btn-search' : 
-                                             tabName === 'git' ? 'btn-git' : 'btn-extensions');
-    
-    if(currentBtn && currentBtn.classList.contains('active')) {
-        // Cerrar todo
-        document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
-        document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
-        return;
-    }
-
-    // Limpiar activos
-    document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
-    document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
-
-    const btnMap = {
+    // Identificar el botón que se presionó
+    const btnIdMap = {
         'explorer': 'btn-explorer',
         'search': 'btn-search',
         'git': 'btn-git',
         'extensions': 'btn-extensions'
     };
     
+    const currentBtn = document.getElementById(btnIdMap[tabName]);
+
+    // SI YA ESTÁ ACTIVO -> LO CERRAMOS
+    if(currentBtn && currentBtn.classList.contains('active')) {
+        document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
+        document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
+        sidebar.classList.remove('show-sidebar'); // <--- ESTO OCULTA LA CAJA NEGRA
+        return;
+    }
+
+    // SI NO ESTÁ ACTIVO -> LO ABRIMOS
+    document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
+    document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
+
     const viewMap = {
         'explorer': 'view-explorer',
         'search': 'view-search',
@@ -77,16 +74,16 @@ window.switchTab = function(tabName) {
         'extensions': 'view-extensions'
     };
 
-    if(btnMap[tabName]) {
-        document.getElementById(btnMap[tabName]).classList.add('active');
+    if(currentBtn) {
+        currentBtn.classList.add('active');
         document.getElementById(viewMap[tabName]).classList.remove('hidden');
+        sidebar.classList.add('show-sidebar'); // <--- ESTO MUESTRA LA CAJA NEGRA
     }
 };
 
-// --- TERMINAL ---
 const heartAscii = `<pre style="color: #ff69b4; font-weight: bold; line-height: 1; margin:0; font-family: monospace;">
-        ****** ******
-      ********** **********
+      *********   ***********
+     *********** ************* 
     ****************************
    ******************************
    ******************************
@@ -95,7 +92,7 @@ const heartAscii = `<pre style="color: #ff69b4; font-weight: bold; line-height: 
       ***********************
        *********************
         *******************
-         ***************
+         ****************
            *************
             ***********
              *********
@@ -105,7 +102,6 @@ const heartAscii = `<pre style="color: #ff69b4; font-weight: bold; line-height: 
                  *
 </pre>`;
 
-// Escuchar la tecla ENTER
 input.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
         const command = input.value.trim();
@@ -122,12 +118,8 @@ input.addEventListener("keydown", function(event) {
         let response = "";
         const cmd = command.toLowerCase();
 
-        if (cmd === "help") {
-            response = "Comandos: status, clear, <3.";
-        } 
-        else if (cmd === "hola") {
-            response = "¡Hola! Estoy aquí — dime qué quieres hacer.";
-        }
+        if (cmd === "help") { response = "Comandos: status, clear, <3."; } 
+        else if (cmd === "hola") { response = "¡Hola! Estoy aquí — dime qué quieres hacer."; }
         else if (cmd === "<3" || cmd === "corazon") {
             terminalOutput.innerHTML = "";
             codeArea.innerHTML = "";
@@ -149,44 +141,37 @@ input.addEventListener("keydown", function(event) {
             }, totalDelay);
             response = "";
         }
-        else if (cmd === "status") {
-            response = "Todo mi corazón operativo para ti al 100%.";
-        }
+        else if (cmd === "status") { response = "Todo mi corazón operativo para ti al 100%."; }
         else if (cmd === "clear" || cmd === "cls") {
             terminalOutput.innerHTML = ""; 
             input.value = "";
             return;
         } 
         else {
-            if(lineIndex < 3) { 
-                response = "Inicializando proyecto..."; 
-            } else {
-                response = `<span style="color: #f44747;">Comando '${cmd}' no reconocido.</span>`;
-            }
+            if(lineIndex < 3) { response = "Inicializando proyecto..."; } 
+            else { response = `<span style="color: #f44747;">Comando '${cmd}' no reconocido.</span>`; }
         }
 
         if (response) {
             terminalOutput.innerHTML += `<div style="margin-bottom: 10px; margin-top: 5px;">${response}</div>`;
         }
-
         input.value = "";
         terminalOutput.scrollTop = terminalOutput.scrollHeight;
     }
 });
 
-// Forzar el foco al cargar la página
 window.onload = function() {
     input.focus();
     
-    // Auto-cerrar sidebar en móvil al tocar el editor
+    // CERRAR AUTOMÁTICAMENTE AL TOCAR EL EDITOR (SOLO CELULAR)
     document.querySelector('.main-area').addEventListener('click', () => {
         if(window.innerWidth < 768) {
             document.querySelectorAll('.icon-container').forEach(icon => icon.classList.remove('active'));
             document.querySelectorAll('.sidebar-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById('sidebar-panel').classList.remove('show-sidebar'); // <--- OCULTAR CAJA
         }
     });
 
-    // Archivos del explorador
     document.querySelectorAll('.file-item').forEach(item => {
         item.addEventListener('click', () => {
             if (item.classList.contains('disabled-file')) return;
@@ -195,7 +180,6 @@ window.onload = function() {
         });
     });
 
-    // Sugerencias de búsqueda
     const suggestions = document.querySelectorAll('.suggestion-item');
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
@@ -215,7 +199,6 @@ window.onload = function() {
         });
     }
 
-    // Git Upload
     const btnUpload = document.getElementById('btn-upload');
     const uploadStatus = document.getElementById('upload-status');
     if (btnUpload && uploadStatus) {
@@ -265,7 +248,6 @@ window.onload = function() {
         });
     }
 
-    // Extensiones
     document.querySelectorAll('.ext-install-btn').forEach(btn => {
         if (btn.textContent.toLowerCase().includes('installed')) {
             btn.disabled = true;
@@ -294,7 +276,6 @@ window.onload = function() {
         });
     });
 
-    // Control de música
     const music = document.getElementById('bgMusic');
     const musicBtn = document.getElementById('musicControl');
     let isPlaying = false;
